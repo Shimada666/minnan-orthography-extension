@@ -9,6 +9,12 @@ Chrome 上的闽南语查询小工具。选中网页里的词语或句子，悬�
 - ODS 异用字查询及正字提示
 - 完全本地查询，不上传选中文字
 
+## 预览
+
+![整句词语解析](docs/images/sentence-lookup.png)
+
+![歌词词语解析](docs/images/lyrics-lookup.png)
+
 ## 准备
 
 ```bash
