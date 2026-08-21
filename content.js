@@ -72,7 +72,7 @@ shadow.innerHTML = `
       .entry .definitions { grid-column: 1 / -1; }
     }
   </style>
-  <button class="trigger" data-minnan-trigger aria-label="查询选中的闽南语词语" hidden>闽</button>
+  <button class="trigger" data-minnan-trigger aria-label="查询选中的闽南语词语" hidden>台</button>
   <article class="card" data-minnan-card role="tooltip" hidden></article>
 `;
 document.documentElement.append(host);
