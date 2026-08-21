@@ -1,0 +1,13 @@
+{
+  "name": "taigi-orthography-extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare": "mkdir -p data vendor && cp node_modules/fflate/umd/index.js vendor/fflate.js && curl -fL https://sutian.moe.edu.tw/media/senn/ods/kautian.ods -o data/kautian.ods",
+    "test:extension": "node scripts/smoke.mjs"
+  },
+  "devDependencies": {
+    "fflate": "0.8.2",
+    "playwright": "^1.62.1"
+  }
+}
