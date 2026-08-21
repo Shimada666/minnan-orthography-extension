@@ -3,6 +3,7 @@
   "name": "闽南语小工具",
   "version": "0.1.0",
   "description": "选中词语或句子，查询闽南语读音、释义和正字。",
+  "homepage_url": "https://github.com/Shimada666/minnan-orthography-extension",
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

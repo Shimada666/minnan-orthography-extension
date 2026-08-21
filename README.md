@@ -43,3 +43,10 @@ npm run test:extension
 ## 数据来源
 
 教育部《臺灣台語常用詞辭典》：<https://sutian.moe.edu.tw/zh-hant/>
+
+## 隐私与授权
+
+- [隐私政策](PRIVACY.md)
+- [第三方资料与开源软件声明](THIRD_PARTY_NOTICES.md)
+- [Chrome Web Store 上架材料](CHROME_WEB_STORE.md)
+- 本项目代码采用 [MIT License](LICENSE)
