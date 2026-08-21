@@ -15,6 +15,8 @@ Chrome 上的闽南语查询小工具。选中网页里的词语或句子，悬�
 
 ![歌词词语解析](docs/images/lyrics-lookup.png)
 
+![歌词整句解析](docs/images/lyrics-dense-lookup.png)
+
 ## 准备
 
 ```bash
