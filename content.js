@@ -2,7 +2,7 @@ const TABLE_NS = "urn:oasis:names:tc:opendocument:xmlns:table:1.0";
 const OFFICE_NS = "urn:oasis:names:tc:opendocument:xmlns:office:1.0";
 
 const host = document.createElement("div");
-host.id = "taigi-word-helper";
+host.id = "minnan-word-helper";
 const shadow = host.attachShadow({ mode: "open" });
 shadow.innerHTML = `
   <style>
@@ -72,8 +72,8 @@ shadow.innerHTML = `
       .entry .definitions { grid-column: 1 / -1; }
     }
   </style>
-  <button class="trigger" data-taigi-trigger aria-label="查询选中的台语词" hidden>台</button>
-  <article class="card" data-taigi-card role="tooltip" hidden></article>
+  <button class="trigger" data-minnan-trigger aria-label="查询选中的闽南语词语" hidden>闽</button>
+  <article class="card" data-minnan-card role="tooltip" hidden></article>
 `;
 document.documentElement.append(host);
 

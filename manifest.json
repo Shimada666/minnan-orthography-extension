@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "台字帖",
+  "name": "闽南语小工具",
   "version": "0.1.0",
-  "description": "选中词语，查询教育部臺灣台語常用詞辭典的读音和释义。",
+  "description": "选中词语或句子，查询闽南语读音、释义和正字。",
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

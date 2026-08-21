@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const profile = await mkdtemp(path.join(tmpdir(), "taigi-extension-"));
+const profile = await mkdtemp(path.join(tmpdir(), "minnan-extension-"));
 const server = createServer((request, response) => {
   response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
   response.end("<!doctype html><meta charset=utf-8><p>伊講：<span id=word>毋知</span>影，閣有<span id=remainder>賰</span>。</p><p><span id=sentence>講好的山盟海誓毋知擱賰偌濟</span></p>");
@@ -22,7 +22,7 @@ const context = await chromium.launchPersistentContext(profile, {
 try {
   const page = await context.newPage();
   await page.goto(`http://127.0.0.1:${address.port}`);
-  await page.locator("#taigi-word-helper").waitFor({ state: "attached" });
+  await page.locator("#minnan-word-helper").waitFor({ state: "attached" });
   await page.locator("#word").evaluate((element) => {
     const range = document.createRange();
     range.selectNodeContents(element);
@@ -32,9 +32,9 @@ try {
     element.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
   });
 
-  const trigger = page.locator("[data-taigi-trigger]");
+  const trigger = page.locator("[data-minnan-trigger]");
   await trigger.hover();
-  const card = page.locator("[data-taigi-card]");
+  const card = page.locator("[data-minnan-card]");
   await card.getByRole("heading", { name: "毋知", exact: true }).waitFor();
   assert.equal(await card.locator(".reading").innerText(), "m̄ tsai");
   assert.match(await card.locator(".definitions li").first().innerText(), /不知、不知道/);
