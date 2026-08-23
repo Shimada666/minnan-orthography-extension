@@ -76,6 +76,7 @@ document.documentElement.append(host);
 
 const trigger = shadow.querySelector(".trigger");
 const card = shadow.querySelector(".card");
+const ignoredSingleCharacters = new Set("的了是在有和就也都而及與著過個這那我你他她它們");
 let selectedText = "";
 let dictionaryPromise;
 let hideTimer;
@@ -107,7 +108,6 @@ function entryFromMatch(dictionary, word, entryIndex, isVariant) {
 }
 
 function lookupSelection(dictionary, text) {
-  const ignoredSingleCharacters = new Set("的了是在有和就也都而及與著過個這那我你他她它們");
   const characters = Array.from(text);
   const candidates = [];
   for (let start = 0; start < characters.length; start += 1) {
@@ -153,7 +153,18 @@ function addTextElement(parent, tag, className, text) {
   element.className = className;
   element.textContent = text;
   parent.append(element);
-  return element;
+}
+
+function renderDefinitions(definitions) {
+  const list = document.createElement("ol");
+  list.className = "definitions";
+  for (const definition of definitions) {
+    const item = document.createElement("li");
+    if (definition.type) addTextElement(item, "span", "part-of-speech", definition.type);
+    item.append(document.createTextNode(definition.text));
+    list.append(item);
+  }
+  return list;
 }
 
 function renderEntry(entry) {
@@ -163,19 +174,7 @@ function renderEntry(entry) {
     addTextElement(card, "div", "variant-note", `異用字，辭典正字：${entry.canonicalWord}`);
   }
   addTextElement(card, "div", "reading", entry.romanization || "未标注读音");
-  const list = document.createElement("ol");
-  list.className = "definitions";
-  if (entry.definitions.length) {
-    for (const definition of entry.definitions) {
-      const item = document.createElement("li");
-      if (definition.type) addTextElement(item, "span", "part-of-speech", definition.type);
-      item.append(document.createTextNode(definition.text));
-      list.append(item);
-    }
-  } else {
-    addTextElement(list, "li", "", "此词目没有可显示的释义。");
-  }
-  card.append(list);
+  card.append(renderDefinitions(entry.definitions));
   addTextElement(card, "p", "source", "资料来源：教育部《臺灣台語常用詞辭典》");
 }
 
@@ -198,15 +197,7 @@ function renderSelection(entries, text) {
     }
     section.append(headword);
     addTextElement(section, "div", "reading", entry.romanization || "未标注读音");
-    const list = document.createElement("ol");
-    list.className = "definitions";
-    for (const definition of entry.definitions) {
-      const item = document.createElement("li");
-      if (definition.type) addTextElement(item, "span", "part-of-speech", definition.type);
-      item.append(document.createTextNode(definition.text));
-      list.append(item);
-    }
-    section.append(list);
+    section.append(renderDefinitions(entry.definitions));
     card.append(section);
   }
   addTextElement(card, "p", "source", "资料来源：教育部《臺灣台語常用詞辭典》");
