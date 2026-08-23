@@ -8,15 +8,15 @@ shadow.innerHTML = `
     .trigger {
       position: fixed;
       z-index: 2147483647;
-      width: 25px;
+      width: 42px;
       height: 25px;
       border: 1px solid rgba(255, 255, 255, .9);
-      border-radius: 50%;
+      border-radius: 999px;
       padding: 0;
       background: #c94b32;
       color: #fff9eb;
       box-shadow: 0 3px 12px rgba(53, 28, 18, .28);
-      font: 700 13px/23px Georgia, "Noto Serif TC", serif;
+      font: 700 12px/23px Georgia, "Noto Serif TC", serif;
       text-align: center;
       cursor: pointer;
     }
@@ -69,7 +69,7 @@ shadow.innerHTML = `
       .entry .definitions { grid-column: 1 / -1; }
     }
   </style>
-  <button class="trigger" data-minnan-trigger aria-label="查询选中的闽南语词语" hidden>台</button>
+  <button class="trigger" data-minnan-trigger aria-label="查询选中的闽南语词语" hidden>閩南</button>
   <article class="card" data-minnan-card role="tooltip" hidden></article>
 `;
 document.documentElement.append(host);
@@ -253,8 +253,8 @@ document.addEventListener("mouseup", () => {
 
   const rect = selection.getRangeAt(0).getBoundingClientRect();
   selectedText = word;
-  trigger.style.left = `${Math.min(window.innerWidth - 33, rect.right + 7)}px`;
-  trigger.style.top = `${Math.max(8, rect.top - 27)}px`;
   trigger.hidden = false;
+  trigger.style.left = `${Math.max(8, Math.min(window.innerWidth - trigger.offsetWidth - 8, rect.right + 7))}px`;
+  trigger.style.top = `${Math.max(8, rect.top - trigger.offsetHeight - 2)}px`;
   card.hidden = true;
 });
