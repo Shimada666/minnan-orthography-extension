@@ -23,7 +23,15 @@ Chrome 上的闽南语查询小工具。选中网页里的词语或句子，悬�
 npm install
 ```
 
-该命令会准备 fflate 浏览器文件和教育部 `kautian.ods`。
+仓库已经包含扩展运行所需的浏览器文件和预编译词典；`npm install` 只安装开发依赖，不会下载或重建词典。
+
+教育部 ODS 内容有实际更新时，运行：
+
+```bash
+npm run update:dictionary
+```
+
+该命令会比较 ODS 内的 `content.xml`，忽略生成日期等打包元数据变化，并只在词典内容变化时更新 ODS 和预编译索引。修改词典构建代码后，可用 `npm run build` 重新生成全部运行时资源。
 
 ## 加载
 
