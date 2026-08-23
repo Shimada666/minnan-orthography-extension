@@ -242,8 +242,9 @@ trigger.addEventListener("mouseleave", scheduleHide);
 card.addEventListener("mouseenter", () => clearTimeout(hideTimer));
 card.addEventListener("mouseleave", scheduleHide);
 
-document.addEventListener("mouseup", () => {
+document.addEventListener("mouseup", (event) => {
   const selection = window.getSelection();
+  if (event.composedPath().includes(host) || (selection && card.contains(selection.anchorNode))) return;
   const word = selection?.toString().trim();
   if (!word || selection.rangeCount === 0) {
     trigger.hidden = true;
