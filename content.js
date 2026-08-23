@@ -254,7 +254,7 @@ document.addEventListener("mouseup", () => {
   const rect = selection.getRangeAt(0).getBoundingClientRect();
   selectedText = word;
   trigger.hidden = false;
-  trigger.style.left = `${Math.max(8, Math.min(window.innerWidth - trigger.offsetWidth - 8, rect.right + 7))}px`;
-  trigger.style.top = `${Math.max(8, rect.top - trigger.offsetHeight - 2)}px`;
+  trigger.style.left = `${Math.max(8, Math.min(window.innerWidth - trigger.offsetWidth - 8, rect.right - trigger.offsetWidth))}px`;
+  trigger.style.top = `${Math.max(8, rect.top - trigger.offsetHeight + 3)}px`;
   card.hidden = true;
 });
