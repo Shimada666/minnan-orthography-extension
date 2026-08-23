@@ -61,6 +61,7 @@ shadow.innerHTML = `
       background: #eadbc0;
       color: #66513d;
       font-size: 12px;
+      user-select: none;
     }
     .status { margin: 0; color: #725d4a; }
     .source { margin: 8px 0 0; color: #8a7562; font-size: 10px; }
