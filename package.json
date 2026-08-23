@@ -6,6 +6,8 @@
     "build": "npm run build:vendor && npm run build:dictionary",
     "build:vendor": "cp node_modules/fflate/umd/index.js vendor/fflate.js",
     "build:dictionary": "node scripts/build-dictionary.mjs",
+    "capture:store": "node scripts/capture-store-screenshot.mjs",
+    "package:extension": "mkdir -p dist && zip -X -FS -r dist/minnan-orthography-extension-$npm_package_version.zip manifest.json content.js icons vendor/fflate.js data/dictionary.json.gz LICENSE THIRD_PARTY_NOTICES.md PRIVACY.md",
     "update:dictionary": "node scripts/update-dictionary.mjs",
     "test:extension": "node scripts/smoke.mjs"
   },

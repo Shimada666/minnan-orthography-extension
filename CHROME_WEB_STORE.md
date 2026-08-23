@@ -67,8 +67,14 @@ No. All executable JavaScript is included in the extension package. The extensio
 5. 选中“講好的山盟海誓毋知擱賰偌濟”，确认卡片显示多个候选词目。
 6. 选中“擱”，确认卡片显示异用字及辞典正字提示。
 
-## 尚需上传的图片
+## 已准备的图片
 
-- 128x128 商店图标
-- 至少一张 1280x800 或 640x400 截图
-- 440x280 小型宣传图
+- 商店图标：`store-assets/icon-128.png`
+- 最新版功能截图：`store-assets/screenshot-current-1280x800.png`
+- 歌词查词截图：`store-assets/screenshot-lyrics-dense-1280x800.png`
+- 整句查词截图：`store-assets/screenshot-sentence-1280x800.png`
+- 小型宣传图：`store-assets/promo-small-440x280.png`
+
+## 上传包
+
+运行 `npm run package:extension`，上传生成的 `dist/minnan-orthography-extension-0.1.0.zip`。
