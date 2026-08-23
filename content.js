@@ -1,6 +1,3 @@
-const TABLE_NS = "urn:oasis:names:tc:opendocument:xmlns:table:1.0";
-const OFFICE_NS = "urn:oasis:names:tc:opendocument:xmlns:office:1.0";
-
 const host = document.createElement("div");
 host.id = "minnan-word-helper";
 const shadow = host.attachShadow({ mode: "open" });
@@ -83,95 +80,66 @@ let selectedText = "";
 let dictionaryPromise;
 let hideTimer;
 
-function cellValue(cell) {
-  const paragraphs = [...cell.getElementsByTagNameNS("*", "p")];
-  if (paragraphs.length) return paragraphs.map((node) => node.textContent).join("\n");
-  return cell.getAttributeNS(OFFICE_NS, "value") ?? "";
-}
-
-function parseSheet(documentNode, sheetName) {
-  const table = [...documentNode.getElementsByTagNameNS(TABLE_NS, "table")]
-    .find((node) => node.getAttributeNS(TABLE_NS, "name") === sheetName);
-  if (!table) throw new Error(`辞典缺少“${sheetName}”工作表`);
-
-  const matrix = [...table.getElementsByTagNameNS(TABLE_NS, "table-row")].map((row) => {
-    const values = [];
-    for (const cell of row.children) {
-      if (cell.namespaceURI !== TABLE_NS || cell.localName !== "table-cell") continue;
-      const repeat = Number(cell.getAttributeNS(TABLE_NS, "number-columns-repeated") || 1);
-      for (let index = 0; index < repeat; index += 1) values.push(cellValue(cell));
-    }
-    return values;
-  });
-
-  const headers = matrix.shift();
-  return matrix.map((values) => Object.fromEntries(
-    headers.map((header, index) => [header, values[index] ?? ""])
-  ));
-}
-
 function loadDictionary() {
   if (!dictionaryPromise) {
-    dictionaryPromise = fetch(chrome.runtime.getURL("data/kautian.ods"))
+    dictionaryPromise = fetch(chrome.runtime.getURL("data/dictionary.json.gz"))
       .then((response) => {
         if (!response.ok) throw new Error("无法读取辞典文件");
         return response.arrayBuffer();
       })
       .then((buffer) => {
-        const archive = fflate.unzipSync(new Uint8Array(buffer));
-        const xml = new TextDecoder().decode(archive["content.xml"]);
-        const documentNode = new DOMParser().parseFromString(xml, "application/xml");
-        return {
-          terms: parseSheet(documentNode, "詞目"),
-          definitions: parseSheet(documentNode, "義項"),
-          variants: parseSheet(documentNode, "異用字")
-        };
+        const json = fflate.gunzipSync(new Uint8Array(buffer));
+        return JSON.parse(new TextDecoder().decode(json));
       });
   }
   return dictionaryPromise;
 }
 
-function lookup(dictionary, word) {
-  const variant = dictionary.variants.find((row) => row["異用字"] === word);
-  const term = dictionary.terms.find((row) =>
-    String(row["漢字"]).replace(/【[^】]+】/g, "") === word
-      || variant && String(row["詞目id"]) === String(variant["詞目id"])
-  );
-  if (!term) throw new Error(`辞典没有收录“${word}”`);
-
-  const id = String(term["詞目id"]);
+function entryFromMatch(dictionary, word, entryIndex, isVariant) {
+  const [canonicalWord, romanization, definitions] = dictionary.entries[entryIndex];
   return {
     word,
-    canonicalWord: String(term["漢字"]).replace(/【[^】]+】/g, ""),
-    isVariant: Boolean(variant) && String(term["漢字"]).replace(/【[^】]+】/g, "") !== word,
-    romanization: term["羅馬字"],
-    definitions: dictionary.definitions
-      .filter((row) => String(row["詞目id"]) === id && row["解說"])
-      .map((row) => ({ type: String(row["詞性"]), text: String(row["解說"]) }))
+    canonicalWord,
+    isVariant: Boolean(isVariant) && canonicalWord !== word,
+    romanization,
+    definitions: definitions.map(([type, text]) => ({ type, text }))
   };
 }
 
 function lookupSelection(dictionary, text) {
   const ignoredSingleCharacters = new Set("的了是在有和就也都而及與著過個這那我你他她它們");
-  const headwords = dictionary.terms.map((term) => String(term["漢字"]).replace(/【[^】]+】/g, ""));
-  const variantWords = dictionary.variants.map((variant) => String(variant["異用字"]));
-  const candidates = [...new Set([...headwords, ...variantWords])]
-    .map((word) => ({ word }))
-    .filter(({ word }) => word && text.includes(word))
-    .filter(({ word }) => word.length > 1 || !ignoredSingleCharacters.has(word))
-    .map(({ word }) => ({ word, index: text.indexOf(word) }))
-    .sort((left, right) => right.word.length - left.word.length || left.index - right.index);
+  const characters = Array.from(text);
+  const candidates = [];
+  for (let start = 0; start < characters.length; start += 1) {
+    let nodeIndex = 0;
+    for (let end = start; end < characters.length; end += 1) {
+      const childIndex = dictionary.trie[nodeIndex][2][characters[end]];
+      if (childIndex === undefined) break;
+      nodeIndex = childIndex;
+      const [entryIndex, isVariant] = dictionary.trie[nodeIndex];
+      if (entryIndex === -1) continue;
+      const word = characters.slice(start, end + 1).join("");
+      if (word.length === 1 && ignoredSingleCharacters.has(word)) continue;
+      candidates.push({ word, index: start, length: end - start + 1, entryIndex, isVariant });
+    }
+  }
+  candidates.sort((left, right) => right.length - left.length || left.index - right.index);
 
   const occupied = new Set();
   const entries = [];
   for (const candidate of candidates) {
     const positions = Array.from(
-      { length: candidate.word.length },
+      { length: candidate.length },
       (_, offset) => candidate.index + offset
     );
     if (positions.some((position) => occupied.has(position))) continue;
 
-    const entry = lookup(dictionary, candidate.word);
+    const entry = entryFromMatch(
+      dictionary,
+      candidate.word,
+      candidate.entryIndex,
+      candidate.isVariant
+    );
     if (!entry.definitions.length) continue;
     positions.forEach((position) => occupied.add(position));
     entries.push({ ...entry, index: candidate.index });
